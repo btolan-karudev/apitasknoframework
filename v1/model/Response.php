@@ -71,7 +71,7 @@ class Response
             header('Cache-Control: no-cache, no-store');
         }
 
-        if (($this->getSuccess() == true && $this->getSuccess() !== false) || !is_numeric($this->getHttpStatusCode())) {
+        if (($this->getSuccess() && !$this->getSuccess()) || !is_numeric($this->getHttpStatusCode())) {
             http_response_code(500);
             $this->_responseData['statusCode'] = 500;
             $this->_responseData['success'] = 200;
