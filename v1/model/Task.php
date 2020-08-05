@@ -42,7 +42,7 @@ class Task
 
     public function setTitle($title): void
     {
-        if (strlen($title) < 0 || strlen($this) > 255) {
+        if (strlen($title) < 0 || strlen($title) > 255) {
             throw new TaskException("Task title error");
         }
 
