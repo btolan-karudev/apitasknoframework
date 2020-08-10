@@ -123,7 +123,7 @@ if (array_key_exists("taskId", $_GET)) {
     } elseif ($_SERVER['REQUEST_METHOD'] === 'PATCH') {
 
         try {
-            if (isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] != 'application/json') {
+            if (isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] !== 'application/json') {
                 $response = new Response();
                 $response->setHttpStatusCode(400);
                 $response->setSuccess(false);
