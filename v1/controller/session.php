@@ -70,7 +70,7 @@ if (array_key_exists("sessionid", $_GET)) {
         $response = new Response();
         $response->setHttpStatusCode(400);
         $response->setSuccess(false);
-        (strlen($jsonData->username) < 1) ? $response->addMessage("Username cannot be blank !") : false;
+        (strlen($jsonData->username) < 1) ? $response->addMessage("Username cannot be blank!") : false;
         (strlen($jsonData->username) > 255) ? $response->addMessage("Username field cannot be greater than 255 characters!") : false;
         (strlen($jsonData->password) < 1) ? $response->addMessage("Password field cannot be blank!") : false;
         (strlen($jsonData->password) > 255) ? $response->addMessage("Password field cannot be greater than 255 characters!") : false;
@@ -83,7 +83,7 @@ if (array_key_exists("sessionid", $_GET)) {
         $username = $jsonData->username;
         $password = $jsonData->password;
 
-        $query = $writeDb->prepare('SELECT id, fullname, username, password, seractive, loginattempts from
+        $query = $writeDb->prepare('SELECT id, fullname, username, password, useractive, loginattempts from
                          tblusers WHERE username =:username');
         $query->bindParam(':username', $username, PDO::PARAM_STR);
         $query->execute();
@@ -203,7 +203,7 @@ if (array_key_exists("sessionid", $_GET)) {
         error_log("Database query error - " . $exception, 0);
         $writeDb->rollBack();
         $response = new Response();
-        $response->setHttpStatusCode(404);
+        $response->setHttpStatusCode(500);
         $response->setSuccess(false);
         $response->addMessage("There was an issue login in!Please try again");
         $response->send();
