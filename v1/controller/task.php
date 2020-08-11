@@ -101,16 +101,16 @@ if (array_key_exists("taskId", $_GET)) {
                 $response->setSuccess(false);
                 $response->addMessage("Task not Found!");
                 $response->send();
-
                 exit();
+
             }
             $response = new Response();
             $response->setHttpStatusCode(200);
             $response->setSuccess(true);
             $response->addMessage("Task Deleted!");
             $response->send();
-
             exit();
+
         } catch (PDOException $exception) {
             $response = new Response();
             $response->setHttpStatusCode(500);

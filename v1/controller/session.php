@@ -16,10 +16,84 @@ try {
 }
 
 if (array_key_exists("sessionid", $_GET)) {
-    if ($_SERVER['REQUEST_METHOD'] === 'PATCH') {
 
-    } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    $sessionId = $_GET['sessionid'];
 
+    if ($sessionId === '' || !is_numeric($sessionId)) {
+        $response = new Response();
+        $response->setHttpStatusCode(400);
+        $response->setSuccess(false);
+        $sessionId === '' ? $response->addMessage("Session ID cannot be blank!") : false;
+        !is_numeric($sessionId) ? $response->addMessage("Session ID must be numeric!") : false;
+        $response->send();
+
+        exit();
+    }
+
+    if (!isset($_SERVER['HTTP_AUTHORIZATION']) || strlen($_SERVER['HTTP_AUTHORIZATION']) < 1) {
+        $response = new Response();
+        $response->setHttpStatusCode(401);
+        $response->setSuccess(false);
+        !isset($_SERVER['HTTP_AUTHORIZATION']) ? $response->addMessage("Access Token is missing from the header!") : false;
+        strlen($_SERVER['HTTP_AUTHORIZATION']) < 1 ? $response->addMessage("Access Token cannot be blank!") : false;
+        $response->send();
+
+        exit();
+    }
+
+    $accessToken = $_SERVER['HTTP_AUTHORIZATION'];
+
+    if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+        try {
+
+            $query = $writeDb->prepare('DELETE from tblsessions WHERE id = :sessionId 
+                                        AND accestoken =:accesToken');
+            $query->bindParam(':sessionId', $sessionId, PDO::PARAM_INT);
+            $query->bindParam(':accesToken', $accessToken, PDO::PARAM_STR);
+            $query->execute();
+
+            $rowCount = $query->rowCount();
+
+            if ($rowCount === 0) {
+                $response = new Response();
+                $response->setHttpStatusCode(400);
+                $response->setSuccess(false);
+                $response->addMessage("Failed to log out using the acces token provided!");
+                $response->send();
+                exit();
+            }
+
+            $returnData = [];
+            $returnData['session_id'] = intval($sessionId);
+
+            $response = new Response();
+            $response->setHttpStatusCode(200);
+            $response->setSuccess(true);
+            $response->addMessage("Logged Out!");
+            $response->setData($returnData);
+            $response->send();
+            exit();
+
+        } catch (PDOException $exception) {
+            $response = new Response();
+            $response->setHttpStatusCode(500);
+            $response->setSuccess(false);
+            $response->addMessage("There was an issue logging out - please try again!");
+            $response->send();
+
+            exit();
+        }
+
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'PATCH') {
+
+    } else {
+        $response = new Response();
+        $response->setHttpStatusCode(405);
+        $response->setSuccess(false);
+        $response->addMessage("Request method not allowed!");
+        $response->send();
+
+        exit();
     }
 } elseif (empty($_GET)) {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
