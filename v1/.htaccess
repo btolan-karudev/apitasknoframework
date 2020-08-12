@@ -1,5 +1,5 @@
 php_flag display_errors on
-SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d
