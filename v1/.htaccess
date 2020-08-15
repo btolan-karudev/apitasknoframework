@@ -1,3 +1,6 @@
+#CORS options
+Header Set Access-Control-Allow-Origin "*"
+
 php_flag display_errors on
 SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 
